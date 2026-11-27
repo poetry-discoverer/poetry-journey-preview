@@ -56,7 +56,8 @@ const SFX={
   done(){ const seq=[[523,0],[659,0.12],[784,0.24],[1047,0.36]]; seq.forEach(([f,t])=>bell(f,t,0.28,0.2)); [523,659,784,1047].forEach(f=>bell(f,0.6,0.9,0.14)); bell(1568,0.75,1.0,0.14); bell(2093,0.9,1.0,0.1); },
   xp(){ tone(1175,0,0.05,'square',0.05); tone(1568,0.05,0.09,'square',0.05); }
 };
-function sfx(n,a){ if(!soundOn()) return; try{SFX[n](a)}catch(e){} }
+function sfx(n,a){ if(!soundOn()||st().nosfx===true) return; try{ if(window.CHIP&&CHIP[n]) CHIP[n](a); else SFX[n](a) }catch(e){} }
+try{ if(window.CHIP) CHIP.voice=function(){ return !A.paused } }catch(e){}
 const blobs={}, bufs={};
 function rawUrl(id){ return M.audio[id]; }
 function toBytes(u){ const m=u.match(/^data:([^;,]+)?(;base64)?,(.*)$/s); const bin=atob(m[3]); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return {a,mime:m[1]||'audio/mpeg'}; }
@@ -161,11 +162,12 @@ function render(){
   root.innerHTML=h; back=false;
   const card=document.getElementById('plc'); wireAudio(card,s.a);
   document.getElementById('plmute').onclick=()=>{ const q=st(); q.mute=soundOn(); save(q); if(q.mute) stopAudio(); else { ac(); sfx('click'); } document.getElementById('plmute').textContent=soundOn()?'🔊':'🔇'; };
+  if(s.t==='section'&&!back&&idx>0) sfx('power');
   if(s.t==='learn'&&unlocked) playClip(s.a,card);
   if(s.t==='learn'&&!unlocked&&hasClip(s.a)){ const bb=card.querySelector('.pl-play'); if(bb) bb.classList.add('pulse'); const hint=document.createElement('div'); hint.className='pl-tap'; hint.textContent='🎧 اضغط ▶ مرة واحدة وبعدها الصوت هيشتغل لوحده'; card.insertBefore(hint,card.firstChild); }
   const bk=card.querySelector('.pl-back'); if(bk) bk.onclick=()=>{ unlocked=true; sfx('click'); if(idx>0){ idx--; back=true; render(); scrollTo(0,0);} };
   const nb=document.getElementById('plnext');
-  if(nb) nb.onclick=()=>{ unlocked=true; ac(); sfx('click');
+  if(nb) nb.onclick=()=>{ unlocked=true; ac(); sfx('jump');
     if(s.t==='write'){ const v=document.getElementById('plw').value; const q=st(); q.answers=q.answers||{}; q.answers[s.key]=v; save(q); if(v.trim()){ const wc=v.trim().split(/\s+/).length; once(LID+':'+idx,wc>=15?10:3,wc>=15?'كتبت!':''); } }
     go(1);
   };
@@ -180,11 +182,11 @@ function render(){
       unlocked=true; ac(); if(ok){ done=true; b.classList.add('right'); const q=st(); q.combo=(q.combo||0)+1; save(q); if(q.combo>=3&&tries===0) sfx('combo',q.combo); else sfx('right');
         burst(b); const pts=tries===0?10:4; if(!q.sx[LID+':'+idx]){ q.sx[LID+':'+idx]=1; save(q); xp(pts, tries===0&&q.combo>=3?'🔥':''); }
         fb.innerHTML='<div class="pl-fb ok">✅ صح! '+(s.why?'<div style="font-size:17px;font-weight:600;margin-top:4px">'+s.why+'</div>':'')+'<button class="pl-next" id="plgo">كمّل</button></div>';
-        document.getElementById('plgo').onclick=()=>{ sfx('click'); go(1); };
+        document.getElementById('plgo').onclick=()=>{ sfx('jump'); go(1); };
       } else { sfx('wrong'); tries++; if(missed.indexOf(s)<0){ missed.push(s); try{ const _q=st(); _q.sr=_q.sr||{}; const _id=LID+':'+S.indexOf(s); if(!_q.sr[_id]){ _q.sr[_id]={st:0,due:Date.now()}; save(_q); } }catch(e){} } b.classList.add('wrong'); const q=st(); q.combo=0; save(q);
         if(s.ex){ done=true; card.querySelectorAll('.pl-opt').forEach(o=>{ o.disabled=true; if(+o.dataset.k===(s.t==='tf'?(s.ans?0:1):s.ans)) o.classList.add('right'); });
           const ra=(s.t==='tf'?(s.ans?0:1):s.ans); fb.innerHTML='<div class="pl-fb no"><div style="font-weight:800">❌ إجابتك مش صح</div><div style="font-size:17px;margin:6px 0">'+(s.ex[k]||'')+'</div></div><div class="pl-fb ok"><div style="font-weight:800">✅ الإجابة الصح</div><div style="font-size:17px;margin:6px 0">'+(s.ex[ra]||s.why||'')+'</div><div style="font-size:13px;color:#777">📘 الشرح من إعداد الموقع</div><button class="pl-next" id="plgo">فهمت، كمّل</button></div>';
-          document.getElementById('plgo').onclick=()=>{ sfx('click'); go(1); };
+          document.getElementById('plgo').onclick=()=>{ sfx('jump'); go(1); };
         } else { fb.innerHTML='<div class="pl-fb no">❌ لأ، جرّب تاني</div>'; setTimeout(()=>{b.classList.remove('wrong');b.style.opacity=.45;b.disabled=true;},420); } }
     });
   }

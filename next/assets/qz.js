@@ -12,7 +12,7 @@ function el(h){ root.innerHTML=h; window.scrollTo(0,0); }
 const NAMES={poetry:'الشعر',intensive:'المنهج النقدي',analysis:'تحليل القصائد',grammar:'القواعد',all:'كل الأسئلة',myth:'الأساطير',history:'تاريخ الشعر'};
 let sfxOn=function(k){ };
 function tone(f,t,d){ try{ const c=new (window.AudioContext||window.webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.type='triangle'; o.frequency.value=f; g.gain.value=.12; o.connect(g); g.connect(c.destination); o.start(c.currentTime+t); o.stop(c.currentTime+t+d); }catch(e){} }
-const snd={right(){ tone(784,0,.12); tone(1047,.1,.25); }, wrong(){ tone(196,0,.2); tone(147,.15,.3); }};
+const snd={right(){ if(window.CHIP) CHIP.right(); }, wrong(){ if(window.CHIP) CHIP.wrong(); }};
 function qHtml(p,n,total,extra){ return '<div class="pl-top" style="display:flex;justify-content:space-between;font-weight:900;color:#777;margin:6px 0 14px"><span>'+n+' / '+total+'</span><span>'+(extra||'')+'</span></div><div class="pl-card"><div class="pl-q">'+p.b.q+'</div>'+p.ix.map((i,k)=>'<button class="pl-opt" data-k="'+k+'">'+p.b.o[i]+'</button>').join('')+'<div id="qfb"></div></div>'; }
 function fbHtml(p,k,ok){ const b=p.b, ch=p.ix[k];
   if(ok) return '<div class="pl-fb ok"><div style="font-weight:800">✅ صح!</div><div style="font-size:17px;margin:6px 0">'+(b.ex[b.a]||'')+'</div><button class="pl-next" id="qgo">كمّل</button></div>';

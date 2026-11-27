@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>حفظ تقدمي | آداب الإنجليزية: قواعد وجرامر وشعر وأساطير</title>
 <link rel="stylesheet" href="assets/style.css"><link rel="stylesheet" href="assets/player.css">
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#58cc02"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="آداب الإنجليزية"><link rel="apple-touch-icon" href="assets/icons/icon-192.png"><meta name="robots" content="noindex,nofollow"></head>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#58cc02"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="آداب الإنجليزية"><link rel="apple-touch-icon" href="assets/icons/icon-192.png"></head>
 <body>
 <canvas id="confetti"></canvas>
 <header class="topbar"><div class="wrap">
@@ -34,4 +34,4 @@ async function imp(t){const m=document.getElementById("msg");try{const o=await p
 document.getElementById("imp").onclick=()=>imp(document.getElementById("in").value);
 document.getElementById("f").onchange=e=>{const r=new FileReader();r.onload=()=>imp(r.result);r.readAsText(e.target.files[0])}})();
 </script>
-</body></html>
+<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script></body></html>
