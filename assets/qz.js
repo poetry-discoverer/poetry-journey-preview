@@ -9,7 +9,7 @@ function srRight(id){ const s=S(), r=s.sr[id]; if(!r) return; if(r.st===0){ s.sr
 function shuf(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 function prep(b){ const ix=shuf(b.o.map((_,i)=>i)); if(b.o.length===2) ix.sort(); return {b, ix, a:ix.indexOf(b.a)}; }
 function el(h){ root.innerHTML=h; window.scrollTo(0,0); }
-const NAMES={poetry:'الشعر',intensive:'المنهج النقدي',analysis:'تحليل القصائد',all:'كل الأسئلة',myth:'الأساطير',history:'تاريخ الشعر'};
+const NAMES={poetry:'الشعر',intensive:'المنهج النقدي',analysis:'تحليل القصائد',all:'كل الأسئلة',myth:'الأساطير',history:'تاريخ الشعر',pterms:'مصطلحات الشعر',gterms:'مصطلحات القواعد',abbr:'الاختصارات'};
 let sfxOn=function(k){ };
 function tone(f,t,d){ try{ const c=new (window.AudioContext||window.webkitAudioContext)(), o=c.createOscillator(), g=c.createGain(); o.type='triangle'; o.frequency.value=f; g.gain.value=.12; o.connect(g); g.connect(c.destination); o.start(c.currentTime+t); o.stop(c.currentTime+t+d); }catch(e){} }
 const snd={right(){ tone(784,0,.12); tone(1047,.1,.25); }, wrong(){ tone(196,0,.2); tone(147,.15,.3); }};
@@ -45,7 +45,7 @@ function exam(set,pool){ const n=Math.min(20,pool.length), secs=n*45; const Q=sh
   tm=setInterval(()=>{ left--; const t=document.getElementById('qt'); if(t) t.textContent=fmt(Math.max(left,0)); if(left<=0){ clearInterval(tm); alert('انتهى الوقت'); finish(); } },1000);
   show(); }
 function pool(set){ return set==='all'?BANK:BANK.filter(b=>b.c===set); }
-function examHome(){ const s=S(); const sets=['poetry','intensive','analysis','all'];
+function examHome(){ const s=S(); const sets=['poetry','intensive','analysis','pterms','gterms','abbr','all'];
   let h='<div class="lesson-head"><div class="emoji"><span class="em">📝</span></div><h1>الامتحانات</h1><p style="color:var(--ink-soft)">تدريب بتصحيح فوري وشرح لكل إجابة، أو امتحان تجريبي بوقت. نتيجتك بتتحفظ.</p></div>';
   sets.forEach(k=>{ const n=pool(k).length, r=s.exams[k]; const en=Math.min(20,n);
     h+='<div class="plan-card" style="margin-bottom:14px"><h2 style="margin:0 0 6px">'+NAMES[k]+'</h2><p style="color:#777;margin:0 0 12px">'+n+' سؤال'+(r?' · آخر نتيجة '+r.last+'% · أفضل '+r.best+'%':'')+'</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="pl-next" style="flex:1;min-width:140px" data-m="p" data-k="'+k+'">تدريب</button><button class="pl-next" style="flex:1;min-width:140px;background:#1cb0f6;box-shadow:0 6px 0 #1899d6" data-m="e" data-k="'+k+'">امتحان تجريبي · '+en+' سؤال · '+Math.round(en*45/60)+' دقيقة</button></div></div>'; });
