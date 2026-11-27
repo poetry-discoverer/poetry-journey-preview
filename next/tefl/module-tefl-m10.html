@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 10: Writing | TeacherRecord</title>
+<link rel="stylesheet" href="assets/style.css">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#58cc02"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Learn TEFL"><link rel="apple-touch-icon" href="assets/icons/icon-192.png"></head>
+<body>
+<canvas id="confetti"></canvas>
+<header class="topbar"><div class="wrap">
+  <a class="logo" href="index.html"><span class="owl"><span class="em">🦉</span></span> Learn TEFL</a>
+  <div class="stats">
+    <span class="pill xp"><span class="em">⭐</span> <span class="xp-val">0</span></span>
+    <span class="pill streak"><span class="em">🔥</span> استمر!</span>
+  </div>
+</div></header>
+<main class="wrap">
+<div class="lesson-head fade"><div class="emoji"><span class="em">🎓</span></div><h1><span dir="ltr">Module 10: Writing</span></h1><p style="color:var(--ink-soft)">مهارة الكتابة</p><div class="tags"><span class="tag">TeacherRecord</span><span class="tag">0 درس</span></div></div>
+<a class="pdf-link" href="modules-tefl.html" style="display:inline-block;margin:10px 0">← كل الموديولات</a>
+<div class="overall fade" id="modov" data-overall=""><div style="display:flex;justify-content:space-between;font-weight:900;margin-bottom:8px"><span>تقدمك في الموديول</span><span><span data-count></span> · <span data-pct></span></span></div><div class="bar"><i></i></div></div>
+<h2 style="margin:18px 0 8px">الدروس</h2><div class="path">
+<p style="text-align:center;color:#666;padding:18px">دروس الموديول ده قريبًا.</p></div>
+<h2 style="margin:22px 0 8px">بعد الدروس</h2>
+<div id="steps"><a class="card fade modstep" data-k="p" href="exam.html?m=tefl-m10&amp;k=p"><span class="icon c-purple"><span class="em">🎯</span></span><span><h2>تدريب على أسئلة الموديول</h2><span class="sub" data-sub></span></span></a>
+</div>
+</main>
+<footer class="footer">دروس جديدة بتتضاف باستمرار <span class="em">💚</span></footer>
+<script src="assets/app.js"></script>
+<script src="assets/modules.js"></script><script>(function(){var M=(window.MODULES||[]).filter(function(x){return x.id==="tefl-m10"})[0];if(!M)return;var s=state(),done=M.lessons.filter(function(l){return s.done&&s.done[l]}).length,all=M.lessons.length&&done===M.lessons.length&&!M.open&&M.complete;var ex=(s.exams||{}),pass=(ex["mod:"+M.id]||{}).best>=70;document.querySelectorAll(".modstep").forEach(function(a){var k=a.dataset.k,sub=a.querySelector("[data-sub]"),ok,msg;if(k==="p"){ok=done>0;msg=ok?"أسئلة من دروس الموديول، والغلط بيروح للمراجعة":"خلّص درس واحد على الأقل الأول"}else if(k==="t"){ok=all;msg=ok?(pass?"✅ نجحت (أفضل نتيجة "+ex["mod:"+M.id].best+"%)":"النجاح من 70%"):"بيفتح لما تخلّص كل دروس الموديول"}else{ok=all&&pass;msg=ok?"امتحان الموديول":(all?"بيفتح بعد ما تنجح في اختبار الموديول (70%)":"بيفتح بعد دروس الموديول واختباره")}sub.textContent=msg;if(!ok){a.setAttribute("aria-disabled","true");a.style.opacity=".55";a.addEventListener("click",function(e){e.preventDefault()})}})})()</script>
+<script>if("serviceWorker"in navigator)addEventListener("load",function(){navigator.serviceWorker.register("sw.js")})</script></body></html>
