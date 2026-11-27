@@ -75,3 +75,6 @@
 @keyframes plCoin{0%{opacity:0;transform:perspective(600px) rotateY(-540deg) scale(.2)}60%{opacity:1;transform:perspective(600px) rotateY(20deg) scale(1.15)}100%{transform:perspective(600px) rotateY(0) scale(1)}}
 .pl-end{animation:plIn3 .6s cubic-bezier(.2,.85,.3,1) both}
 @media (prefers-reduced-motion:reduce){.pl-card,.pl-end,.pl-end .big{animation:none!important}}
+
+.lc-en{direction:ltr;text-align:left;font-family:'Nunito',system-ui,sans-serif;font-weight:600;font-size:1.05em;line-height:1.7;color:#35506b;background:#f1f8ff;border:2px solid #cfe6fb;border-radius:14px;padding:12px 14px;margin:14px 0 6px}
+.lc-flag{display:inline-block;background:#1cb0f6;color:#fff;font-size:.7em;font-weight:900;border-radius:6px;padding:1px 7px;margin-inline-end:6px;vertical-align:middle;letter-spacing:.5px}

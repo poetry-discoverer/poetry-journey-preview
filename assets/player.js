@@ -113,7 +113,7 @@ function render(){
   let h='<div class="pl-top"><div class="pl-bar"><i style="width:'+pct+'%"></i></div><div class="pl-count">'+(idx+1)+' / '+S.length+'</div><button class="pl-mute" id="plmute" aria-label="الصوت">'+(soundOn()?'🔊':'🔇')+'</button></div>';
   h+='<div class="pl-card'+(back?' back':'')+(s.t==='section'?' pl-section':'')+(s.t==='end'?' pl-end':'')+'" id="plc">';
   const nxt='<div class="pl-nav">'+(idx>0&&s.t!=='end'?'<button class="pl-back" aria-label="رجوع">→</button>':'')+'<button class="pl-next" id="plnext">التالي</button></div>';
-  if(s.t==='learn'){ h+=audioBox(s.a)+'<div class="pl-text">'+s.h+'</div>'+nxt; }
+  if(s.t==='learn'){ h+=audioBox(s.a)+'<div class="pl-text">'+s.h+'</div>'+(s.en?'<div class="lc-en" dir="ltr"><span class="lc-flag">EN</span> '+s.en+'</div>':'')+nxt; }
   else if(s.t==='section'){ h+='<div class="big">📄</div><h2>'+s.h.replace(/^(<span class="em">.*?<\/span>\s*)+/,'')+'</h2>'+nxt; }
   else if(s.t==='mc'||s.t==='tf'){
     h+='<div class="pl-q">'+s.q+'</div>';
