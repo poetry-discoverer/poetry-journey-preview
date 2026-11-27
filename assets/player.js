@@ -199,7 +199,7 @@ render();
   paint(); })();
 
 // ---- glossary: tap an English term to see its meaning and jump to the lesson that explains it
-(function(){ const G=window.GLOSSARY; if(!G) return; const map={}; G.forEach(e=>{ map[e.t]=e; });
+(function(){ const G=(window.GLOSSARY||[]).concat(window.GGLOSSARY||[]); if(!G.length) return; const map={}; G.forEach(e=>{ map[e.t]=e; });
   const hostC=document.getElementById('player');
   function norm(t){ t=t.trim().toLowerCase(); if(map[t]) return map[t]; if(t.endsWith('s')&&map[t.slice(0,-1)]) return map[t.slice(0,-1)]; if(t.endsWith('es')&&map[t.slice(0,-2)]) return map[t.slice(0,-2)]; return null; }
   function sheet(e){ const old=document.getElementById('glsheet'); if(old) old.remove(); const here=(e.l===LID);
