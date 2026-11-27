@@ -76,5 +76,4 @@
 .pl-end{animation:plIn3 .6s cubic-bezier(.2,.85,.3,1) both}
 @media (prefers-reduced-motion:reduce){.pl-card,.pl-end,.pl-end .big{animation:none!important}}
 
-.lc-en{direction:ltr;text-align:left;font-family:'Nunito',system-ui,sans-serif;font-weight:600;font-size:1.05em;line-height:1.7;color:#35506b;background:#f1f8ff;border:2px solid #cfe6fb;border-radius:14px;padding:12px 14px;margin:14px 0 6px}
-.lc-flag{display:inline-block;background:#1cb0f6;color:#fff;font-size:.7em;font-weight:900;border-radius:6px;padding:1px 7px;margin-inline-end:6px;vertical-align:middle;letter-spacing:.5px}
+.pl-mic{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}.pl-mic>#plaudio{flex-basis:100%}.pl-micb{font:inherit;font-weight:800;font-size:16px;border:2px solid #e5e5e5;background:#fff;border-radius:14px;padding:10px 14px;cursor:pointer;color:#1cb0f6}.pl-micb.on{background:#ff4b4b;border-color:#ff4b4b;color:#fff}.pl-micst{color:#777;font-size:14px}

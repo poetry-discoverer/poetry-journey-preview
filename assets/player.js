@@ -1,4 +1,30 @@
 (function(){
+
+const MICBAR='<div class="pl-mic" id="plmicbar"><button type="button" class="pl-micb" id="plmic">🎤 اكتب بصوتك</button><button type="button" class="pl-micb" id="pllang">عربي</button><button type="button" class="pl-micb" id="plrec">⏺ سجّل صوتك</button><span class="pl-micst" id="plmst"></span><div id="plaudio"></div></div>';
+let _sr=null,_mr=null,_stream=null,_lang='ar-EG',_act=false;
+function _st(t){ const e=document.getElementById('plmst'); if(e) e.textContent=t||''; }
+function _db(cb){ try{ const r=indexedDB.open('adab-rec',1); r.onupgradeneeded=()=>r.result.createObjectStore('r'); r.onsuccess=()=>cb(r.result); r.onerror=()=>cb(null); }catch(e){ cb(null); } }
+function _saveRec(key,blob){ _db(d=>{ if(!d) return; try{ d.transaction('r','readwrite').objectStore('r').put(blob,key); }catch(e){} }); }
+function _loadRec(key,cb){ _db(d=>{ if(!d) return cb(null); try{ const q=d.transaction('r').objectStore('r').get(key); q.onsuccess=()=>cb(q.result||null); q.onerror=()=>cb(null); }catch(e){ cb(null); } }); }
+function _showAudio(blob){ const box=document.getElementById('plaudio'); if(!box) return; box.innerHTML=''; const a=document.createElement('audio'); a.controls=true; a.src=URL.createObjectURL(blob); a.style.cssText='width:100%;margin-top:8px'; box.appendChild(a); }
+function micStop(){ _act=false; try{ _sr&&_sr.stop(); }catch(e){} _sr=null; try{ if(_mr&&_mr.state!=='inactive') _mr.stop(); }catch(e){} _mr=null; if(_stream){ _stream.getTracks().forEach(t=>t.stop()); _stream=null; } const m=document.getElementById('plmic'), r=document.getElementById('plrec'); if(m){ m.textContent='🎤 اكتب بصوتك'; m.classList.remove('on'); } if(r){ r.textContent='⏺ سجّل صوتك'; r.classList.remove('on'); } }
+function micInit(key){ const bar=document.getElementById('plmicbar'); if(!bar) return; const ta=document.getElementById('plw');
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition; const mic=document.getElementById('plmic'), lang=document.getElementById('pllang'), rec=document.getElementById('plrec');
+  if(!SR) { mic.style.display='none'; lang.style.display='none'; }
+  if(!(navigator.mediaDevices&&window.MediaRecorder)) rec.style.display='none';
+  _loadRec(key,b=>{ if(b) _showAudio(b); });
+  lang.onclick=()=>{ _lang=_lang==='ar-EG'?'en-US':'ar-EG'; lang.textContent=_lang==='ar-EG'?'عربي':'English'; if(_act){ micStop(); } };
+  mic.onclick=()=>{ if(_act){ micStop(); _st(''); return; } micStop(); if(ta.readOnly) return; _act=true; mic.textContent='⏹ وقّف'; mic.classList.add('on'); _st('بيسمعك… اتكلم'); let base=ta.value;
+    const go=()=>{ if(!_act) return; const r=new SR(); _sr=r; r.lang=_lang; r.interimResults=true; r.continuous=false; let fin='';
+      r.onresult=e=>{ let t=''; for(let i=e.resultIndex;i<e.results.length;i++){ t+=e.results[i][0].transcript; if(e.results[i].isFinal){ fin+=e.results[i][0].transcript+' '; } } ta.value=(base+(base&&!/\s$/.test(base)?' ':'')+(fin||t)).trim(); };
+      r.onend=()=>{ base=ta.value; if(_act) setTimeout(go,150); };
+      r.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'){ _st('الميكروفون مش مسموح. فعّله من إعدادات المتصفح.'); micStop(); } else if(e.error==='network'){ _st('الكتابة بالصوت محتاجة إنترنت.'); micStop(); } };
+      try{ r.start(); }catch(e){} }; go(); };
+  rec.onclick=async()=>{ if(_mr&&_mr.state==='recording'){ micStop(); return; } micStop(); if(ta.readOnly&&false) return;
+    try{ _stream=await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ _st('الميكروفون مش مسموح.'); return; }
+    const chunks=[]; _mr=new MediaRecorder(_stream); _mr.ondataavailable=e=>{ if(e.data&&e.data.size) chunks.push(e.data); };
+    const mr=_mr; mr.onstop=()=>{ const b=new Blob(chunks,{type:mr.mimeType||'audio/webm'}); if(b.size){ _saveRec(key,b); _showAudio(b); _st('اتحفظ التسجيل على جهازك.'); } };
+    mr.start(); rec.textContent='⏹ وقّف التسجيل'; rec.classList.add('on'); _st('بيسجّل…'); }; }
 const root=document.getElementById('player'); if(!root||!window.STEPS) return;
 const S=window.STEPS.filter(s=>!s.hide), LID=window.LESSON_ID, M=window.AUDIO_MANIFEST||{audio:{},pdf:{}};
 function st(){ const s=state(); s.steps=s.steps||{}; s.sx=s.sx||{}; s.combo=s.combo||0; return s; }
@@ -113,7 +139,7 @@ function render(){
   let h='<div class="pl-top"><div class="pl-bar"><i style="width:'+pct+'%"></i></div><div class="pl-count">'+(idx+1)+' / '+S.length+'</div><button class="pl-mute" id="plmute" aria-label="الصوت">'+(soundOn()?'🔊':'🔇')+'</button></div>';
   h+='<div class="pl-card'+(back?' back':'')+(s.t==='section'?' pl-section':'')+(s.t==='end'?' pl-end':'')+'" id="plc">';
   const nxt='<div class="pl-nav">'+(idx>0&&s.t!=='end'?'<button class="pl-back" aria-label="رجوع">→</button>':'')+'<button class="pl-next" id="plnext">التالي</button></div>';
-  if(s.t==='learn'){ h+=audioBox(s.a)+'<div class="pl-text">'+s.h+'</div>'+(s.en?'<div class="lc-en" dir="ltr"><span class="lc-flag">EN</span> '+s.en+'</div>':'')+nxt; }
+  if(s.t==='learn'){ h+=audioBox(s.a)+'<div class="pl-text">'+s.h+'</div>'+nxt; }
   else if(s.t==='section'){ h+='<div class="big">📄</div><h2>'+s.h.replace(/^(<span class="em">.*?<\/span>\s*)+/,'')+'</h2>'+nxt; }
   else if(s.t==='mc'||s.t==='tf'){
     h+='<div class="pl-q">'+s.q+'</div>';
@@ -122,7 +148,7 @@ function render(){
     h+='<div id="plfb"></div>';
   }
   else if(s.t==='recall'){ h+='<div class="pl-q">'+s.q+'</div><div class="pl-hint" style="color:#777;margin-bottom:10px">فكّر في إجابتك الأول، وبعدين اضغط.</div><button class="pl-next" id="plshow" style="background:#1cb0f6;box-shadow:0 6px 0 #1899d6">شوف الإجابة</button><div id="plfb"></div>'; }
-  else if(s.t==='write'){ h+='<div class="pl-q">'+s.q+'</div><textarea class="pl-write" id="plw" placeholder="اكتب إجابتك هنا (جملتين أو تلاتة)… بتتحفظ عندك"></textarea>'+(s.a?'<div id="plmodel"></div><button class="pl-next" id="plsub" style="background:#1cb0f6;box-shadow:0 6px 0 #1899d6">سلّم إجابتي وقارنها</button>':'')+'<div class="pl-nav"'+(s.a?' style="display:none" id="plnavw"':'')+'>'+(idx>0?'<button class="pl-back" aria-label="رجوع">→</button>':'')+'<button class="pl-next" id="plnext">التالي</button></div>'; }
+  else if(s.t==='write'){ h+='<div class="pl-q">'+s.q+'</div>'+(s.a?'<div id="plmodel"></div>':'')+'<textarea class="pl-write" id="plw" placeholder="اكتب إجابتك هنا، أو اتكلم بالميكروفون… بتتحفظ عندك"></textarea>'+MICBAR+(s.a?'<button class="pl-next" id="plsub" style="background:#1cb0f6;box-shadow:0 6px 0 #1899d6">سلّم إجابتي وقارنها</button>':'')+'<div class="pl-nav"'+(s.a?' style="display:none" id="plnavw"':'')+'>'+(idx>0?'<button class="pl-back" aria-label="رجوع">→</button>':'')+'<button class="pl-next" id="plnext">التالي</button></div>'; }
   else if(s.t==='end'){
     const pdf=M.pdf&&M.pdf[LID];
     h+='<div class="big">🏆</div><h2>برافو! خلصت الدرس</h2><div class="xps">⭐ كسبت '+gained+' نقطة في الدرس ده</div>';
@@ -143,8 +169,8 @@ function render(){
     if(s.t==='write'){ const v=document.getElementById('plw').value; const q=st(); q.answers=q.answers||{}; q.answers[s.key]=v; save(q); if(v.trim()){ const wc=v.trim().split(/\s+/).length; once(LID+':'+idx,wc>=15?10:3,wc>=15?'كتبت!':''); } }
     go(1);
   };
-  if(s.t==='write'&&s.a){ document.getElementById('plsub').onclick=()=>{ unlocked=true; sfx('click'); const w=document.getElementById('plw'); const v=w.value.trim(); if(!v){ w.focus(); return; } const q=st(); q.answers=q.answers||{}; q.answers[s.key]=w.value; save(q); const wc=v.split(/\s+/).length; once(LID+':'+idx,wc>=15?10:3,wc>=15?'كتبت!':''); if(wc<15){ const n=document.createElement('div'); n.className='pl-hint'; n.style.cssText='color:#777;margin:8px 0'; n.textContent='جرّب تكتب أكتر من كده المرة الجاية (١٥ كلمة أو أكتر تديك نقاط أكتر).'; document.getElementById('plmodel').appendChild(n); } document.getElementById('plmodel').insertAdjacentHTML('afterbegin','<div class="pl-fb info"><div style="font-size:17px;font-weight:600">إجابة نموذجية للمقارنة:</div>'+s.a+'</div>'); document.getElementById('plsub').remove(); const nv=document.getElementById('plnavw'); if(nv) nv.style.display=''; }; }
-  if(s.t==='write'){ const q=st(); const w=document.getElementById('plw'); if(q.answers&&q.answers[s.key]) w.value=q.answers[s.key]; }
+  if(s.t==='write'&&s.a){ document.getElementById('plsub').onclick=()=>{ unlocked=true; sfx('click'); const w=document.getElementById('plw'); const v=w.value.trim(); if(!v){ w.focus(); return; } const q=st(); q.answers=q.answers||{}; q.answers[s.key]=w.value; save(q); const wc=v.split(/\s+/).length; once(LID+':'+idx,wc>=15?10:3,wc>=15?'كتبت!':''); if(wc<15){ const n=document.createElement('div'); n.className='pl-hint'; n.style.cssText='color:#777;margin:8px 0'; n.textContent='جرّب تكتب أكتر من كده المرة الجاية (١٥ كلمة أو أكتر تديك نقاط أكتر).'; document.getElementById('plmodel').appendChild(n); } w.readOnly=true; micStop(); document.getElementById('plmodel').insertAdjacentHTML('afterbegin','<div class="pl-fb info"><div style="font-size:17px;font-weight:600">الإجابة النموذجية:</div>'+s.a+'</div>'); document.getElementById('plmodel').scrollIntoView({behavior:'smooth',block:'center'}); document.getElementById('plsub').remove(); const nv=document.getElementById('plnavw'); if(nv) nv.style.display=''; }; }
+  if(s.t==='write'){ const q=st(); const w=document.getElementById('plw'); if(q.answers&&q.answers[s.key]) w.value=q.answers[s.key]; micInit(s.key); }
   if(s.t==='mc'||s.t==='tf'){
     let tries=0, done=false;
     card.querySelectorAll('.pl-opt').forEach(b=>b.onclick=()=>{
@@ -155,7 +181,7 @@ function render(){
         burst(b); const pts=tries===0?10:4; if(!q.sx[LID+':'+idx]){ q.sx[LID+':'+idx]=1; save(q); xp(pts, tries===0&&q.combo>=3?'🔥':''); }
         fb.innerHTML='<div class="pl-fb ok">✅ صح! '+(s.why?'<div style="font-size:17px;font-weight:600;margin-top:4px">'+s.why+'</div>':'')+'<button class="pl-next" id="plgo">كمّل</button></div>';
         document.getElementById('plgo').onclick=()=>{ sfx('click'); go(1); };
-      } else { sfx('wrong'); tries++; if(missed.indexOf(s)<0){ missed.push(s); try{ const _q=st(); _q.sr=_q.sr||{}; const _id=LID+':'+S.indexOf(s); if(!_q.sr[_id]){ _q.sr[_id]={st:0,due:Date.now()+864e5}; save(_q); } }catch(e){} } b.classList.add('wrong'); const q=st(); q.combo=0; save(q);
+      } else { sfx('wrong'); tries++; if(missed.indexOf(s)<0){ missed.push(s); try{ const _q=st(); _q.sr=_q.sr||{}; const _id=LID+':'+S.indexOf(s); if(!_q.sr[_id]){ _q.sr[_id]={st:0,due:Date.now()}; save(_q); } }catch(e){} } b.classList.add('wrong'); const q=st(); q.combo=0; save(q);
         if(s.ex){ done=true; card.querySelectorAll('.pl-opt').forEach(o=>{ o.disabled=true; if(+o.dataset.k===(s.t==='tf'?(s.ans?0:1):s.ans)) o.classList.add('right'); });
           const ra=(s.t==='tf'?(s.ans?0:1):s.ans); fb.innerHTML='<div class="pl-fb no"><div style="font-weight:800">❌ إجابتك مش صح</div><div style="font-size:17px;margin:6px 0">'+(s.ex[k]||'')+'</div></div><div class="pl-fb ok"><div style="font-weight:800">✅ الإجابة الصح</div><div style="font-size:17px;margin:6px 0">'+(s.ex[ra]||s.why||'')+'</div><div style="font-size:13px;color:#777">📘 الشرح من إعداد الموقع</div><button class="pl-next" id="plgo">فهمت، كمّل</button></div>';
           document.getElementById('plgo').onclick=()=>{ sfx('click'); go(1); };
@@ -177,7 +203,6 @@ function render(){
     else { try{confetti()}catch(e){} setTimeout(()=>sfx('done'),50); }
   }
   refreshHeader();
-  if(!document.getElementById('plver')){ const v=document.createElement('div'); v.id='plver'; v.style.cssText='text-align:center;color:#bbb;font-size:12px;margin-top:6px;direction:ltr'; v.textContent='player v9 · audio '+(M.audio&&Object.keys(M.audio).length?Object.keys(M.audio).length+' clips (mp3)':'none'); root.appendChild(v); } else { const v=document.getElementById('plver'); root.appendChild(v); }
 }
 function go(d){ if(idx+d<0||idx+d>=S.length) return; idx+=d; render(); const t=document.getElementById('plc'); if(t) window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+scrollY-90)}); }
 render();
