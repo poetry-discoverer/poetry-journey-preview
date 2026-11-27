@@ -156,3 +156,11 @@ html,body{max-width:100%;overflow-x:clip}
 .stats{flex:none}
 @media(max-width:480px){.logo{white-space:normal;font-size:.95rem}.logo .owl{width:42px;height:42px;font-size:1.5rem;flex:none}.topbar .wrap{gap:8px}}
 .navrow{flex-wrap:wrap}
+
+/* exam layers */
+.q-hard,.q-simple{direction:ltr;text-align:left;unicode-bidi:isolate}
+.q-hard{font-weight:900}
+.q-simple{font-size:.88em;color:#4a4a4a;margin-top:8px;font-weight:700}
+.q-ar{font-size:.82em;color:#777;margin-top:8px;border-top:1px dashed #ddd;padding-top:8px;font-weight:700}
+.ex-en{direction:ltr;text-align:left;unicode-bidi:isolate;margin-bottom:4px}
+.ex-ar{direction:rtl;text-align:right}
