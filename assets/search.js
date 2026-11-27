@@ -20,7 +20,7 @@ function titleOf(id){var l=DATA.L.filter(function(x){return x.id===id})[0];retur
 function draw(){var q=inp.value.trim();if(!q){box.innerHTML='';box.style.display='none';return}box.style.display='block';if(!DATA){box.innerHTML='<p class="sr-empty">لحظة…</p>';load(draw);return}
 var r=find(q);if(!r||(!r.res.length&&!r.gl.length)){box.innerHTML='<p class="sr-empty">مفيش نتيجة. جرّب كلمة تانية، بالعربي أو بالإنجليزي.</p>';return}
 var h='';if(r.gl.length){h+='<div class="sr-h">مصطلحات</div>';r.gl.forEach(function(g){var l=titleOf(g.l);h+='<a class="sr-it sr-term" href="'+lessonUrl(g.l)+'"><b>'+esc(g.t)+'</b> <span>'+esc(g.a)+'</span><small>'+esc(g.d)+'</small></a>'});}
-if(r.res.length){h+='<div class="sr-h">دروس</div>';r.res.slice(0,6).forEach(function(x){var l=x.l;h+='<a class="sr-it" href="'+lessonUrl(l.id)+'"><b>'+esc(l.t)+'</b><span class="sr-k">'+(NAMES[l.k]||'')+'</span><small>'+snip(l,r.ts)+'</small></a>'});
+if(r.res.length){h+='<div class="sr-h">دروس</div>';r.res.slice(0,6).forEach(function(x){var l=x.l;h+='<a class="sr-it" href="'+lessonUrl(l.id)+'"><b>'+esc(l.t)+'</b><span class="sr-k">'+(NAMES[l.k]||'')+'</span><small class="sr-m">'+esc(l.m||'')+'</small><small>'+snip(l,r.ts)+'</small></a>'});
 var seen={};r.res.slice(0,6).forEach(function(x){seen[x.l.id]=1});var rel=[];r.res[0].l.r.forEach(function(id){if(!seen[id]&&rel.length<3)rel.push(id)});
 if(rel.length){h+='<div class="sr-h">دروس مرتبطة بيها</div>';rel.forEach(function(id){var l=titleOf(id);if(l)h+='<a class="sr-it sr-rel" href="'+lessonUrl(id)+'"><b>'+esc(l.t)+'</b><span class="sr-k">'+(NAMES[l.k]||'')+'</span></a>'})}}
 box.innerHTML=h}
