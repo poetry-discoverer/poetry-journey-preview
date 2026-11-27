@@ -161,3 +161,5 @@ p.addEventListener('click',function(e){e.stopPropagation();var s=state();s.nosfx
 function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f()}
 ready(function(){pill();document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('.btn,a.card,a.node,.node-label');if(t&&!t.closest('#player,#qz'))C.click()},true)});
 return C})();
+
+;(function(){try{var s=document.currentScript;if(!s)return;var b=s.src.replace(/app\.js.*$/,'');var l=document.createElement('link');l.rel='stylesheet';l.href=b+'search.css';document.head.appendChild(l);var j=document.createElement('script');j.src=b+'search.js';document.head.appendChild(j)}catch(e){}})();
