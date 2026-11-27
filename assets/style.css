@@ -146,3 +146,5 @@ img{max-width:100%;height:auto;content-visibility:auto}
 @keyframes pulse3d{0%,100%{transform:perspective(500px) rotateX(0) scale(1)}50%{transform:perspective(500px) rotateX(-12deg) scale(1.07)}}
 .node.done{animation:none}
 @media (prefers-reduced-motion:reduce){.fade{transform:none}}
+
+.en{font-size:16px;line-height:1.6;color:#5f6b7a;border-inline-start:3px solid #1cb0f6;padding:2px 10px;margin:-2px 0 10px;text-align:left;font-family:inherit;background:#f3faff;border-radius:6px}
